@@ -1,5 +1,10 @@
 import numpy as np
 from sympy import *
+from sympy.physics.quantum.dagger import Dagger
+from sympy.physics.quantum.state import Ket, Bra
+from sympy.physics.quantum.operator import Operator
+from sympy.physics.quantum import InnerProduct, OuterProduct
+
 
 init_printing()
 
@@ -19,7 +24,7 @@ phi3 = m2*Matrix([[phi2.row(0)[0],phi2.row(0)[1],0],[phi2.row(1)[0],phi2.row(1)[
 m3 = Matrix([[exp(I*p14)*cos(t14),exp(I*p14)*sin(t14)*cos(t24),exp(I*p14)*sin(t14)*sin(t24)*cos(t34),exp(I*p14)*sin(t14)*sin(t24)*sin(t34)],[-exp(I*p24)*sin(t14),exp(I*p24)*cos(t14)*cos(t24),exp(I*p24)*cos(t14)*sin(t24)*cos(t34),exp(I*p24)*cos(t14)*sin(t24)*sin(t34)],[0,-exp(I*p34)*sin(t24),exp(I*p34)*cos(t24)*cos(t34),exp(I*p34)*cos(t24)*sin(t34)],[0,0,exp(I*p44)*cos(t34),exp(I*p44)*sin(t34)]])
 
 phi4 = m3*Matrix([[phi3.row(0)[0],phi3.row(0)[1],phi3.row(0)[2],0],[phi3.row(1)[0],phi3.row(1)[1],phi3.row(1)[2],0],[phi3.row(2)[0],phi3.row(2)[1],phi3.row(2)[2],0],[0,0,0,1]])
-pprint(phi4)
+#pprint(phi4)
 
 def com(A,B):
     return A*B-B*A
@@ -27,26 +32,36 @@ def com(A,B):
 def acom(A,B):
     return A*B+B*A
 
-def proba(U):
+def proba(U,psi):
     U00 = Matrix([[U.row(0)[0],U.row(0)[1]],[U.row(1)[0],U.row(1)[1]]])
     U01 = Matrix([[U.row(0)[2],U.row(0)[3]],[U.row(1)[2],U.row(1)[3]]])
     U10 = Matrix([[U.row(2)[0],U.row(2)[1]],[U.row(3)[0],U.row(3)[1]]])
     U11 = Matrix([[U.row(3)[2],U.row(3)[3]],[U.row(3)[2],U.row(3)[3]]])
     print(U00,U01,U10,U11)
 
-    a = com(U01,U00)**2
-    b = 1/2*acom(com(U11,U00),com(U01,U00)) + 1/2*acom(com(U10,U01),com(U00,U01))
-    c = 1/4*com(U10,U01)**2+1/4*com(U11,U00)**2 + 1/4*acom(com(U10,U01),com(U00,U11))
-    d = 1/sqrt(2)*acom(com(U01,U00),com(U11,U10))
-    e = 1/2*acom(com(U11,U10),com(U11,U00))+1/2*acom(com(U11,U10),com(U01,U10))
-    f = com(U11,U10)**2
+    f1 = com(U01,U00)**2
+    f2 = 1/2*acom(com(U11,U00),com(U01,U00)) + 1/2*acom(com(U10,U01),com(U00,U01))
+    f3 = 1/4*com(U10,U01)**2+1/4*com(U11,U00)**2 + 1/4*acom(com(U10,U01),com(U00,U11))
+    f4 = 1/sqrt(2)*acom(com(U01,U00),com(U11,U10))
+    f5 = 1/2*acom(com(U11,U10),com(U11,U00))+1/2*acom(com(U11,U10),com(U01,U10))
+    f6 = com(U11,U10)**2
 
-    norm = 1
+    sumf = f1+f2+f3+f4+f5+f6
 
-    return 1/4*(a**2+b**2+c**2+d**2+e**2+f**2)/norm
+    return Dagger(sumf*psi)*(sumf*psi)/(Dagger(psi)*psi)
+
+a = Ket('0')
+b = Ket('1')
+#psi = Ket('ψ')
+alpha, beta = symbols('α β')
+
+#psi0 = alpha*a+beta*b
+
+psi0 = Matrix([[alpha],[beta]])
 
 U = 1/sqrt(2)*Matrix([[0,0,1,1],[0,0,1,-1],[1,-1,0,0],[-1,-1,0,0]])
 
-pprint(proba(U))
+psi = 0
+A = Matrix([[1,0],[0,2]])
 
-pprint(proba(phi4))
+pprint(proba(U,psi0))
