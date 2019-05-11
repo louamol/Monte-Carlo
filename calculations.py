@@ -48,20 +48,25 @@ def proba(U,psi):
 
     sumf = f1+f2+f3+f4+f5+f6
 
-    return Dagger(sumf*psi)*(sumf*psi)/(Dagger(psi)*psi)
+    combUpsi0 = U11*U00*U10*U00-U01*U10*U10*U00-U11*U00*U00*U10+U01*U10*U00*U10 +U10*U00*U10*U00-U00*U10*U10*U00-U10*U00*U00*U10+U00*U10*U00*U10 +U10*U00*U11*U00-U00*U10*U11*U00-U10*U00*U01*U10+U00*U10*U01*U10 +U10*U01*U10*U00-U00*U11*U10*U00-U10*U01*U00*U10+U00*U11*U00*U10 +U10*U00*U10*U01-U00*U10*U10*U01-U10*U00*U00*U11+U00*U10*U00*U11+U11*U01*U10*U00-U01*U11*U10*U00-U11*U01*U00*U10+U01*U11*U00*U10 +U10*U00*U11*U01-U00*U10*U11*U01-U10*U00*U01*U11+U00*U10*U01*U11+U10*U01*U10*U01-U00*U11*U10*U01-U10*U01*U00*U11+U00*U11*U00*U11+U11*U00*U11*U00-U01*U10*U11*U00-U11*U00*U01*U10+U01*U10*U01*U10+U11*U00*U10*U01-U01*U10*U10*U01-U11*U00*U00*U11+U01*U10*U00*U11+U10*U01*U11*U00-U00*U11*U11*U00-U10*U01*U01*U10+U00*U11*U01*U10+U10*U01*U11*U01-U00*U11*U11*U01-U10*U01*U01*U11+U00*U11*U01*U11+U11*U00*U11*U01-U01*U10*U11*U01-U11*U00*U01*U11+U01*U10*U01*U11+U11*U01*U10*U01-U01*U11*U10*U01-U11*U01*U00*U11+U01*U11*U00*U11+U11*U01*U11*U00-U01*U11*U11*U00-U11*U01*U01*U10+U01*U11*U01*U10+U11*U01*U11*U01-U01*U11*U11*U01-U11*U01*U01*U11+U01*U11*U01*U11
+
+    norm = 1/2*Dagger(combUpsi0*psi)*combUpsi0*psi
+    mel = Dagger(sumf*psi)*(sumf*psi)
+    pprint("Numérateur : ")
+    pprint(mel[0])
+    print("")
+    pprint("Dénominateurs : ")
+    pprint(norm[0])
+    print("")
+
+    return mel[0]/norm[0]
 
 a = Ket('0')
 b = Ket('1')
 #psi = Ket('ψ')
 alpha, beta = symbols('α β')
 
-#psi0 = alpha*a+beta*b
-
 psi0 = Matrix([[alpha],[beta]])
-
 U = 1/sqrt(2)*Matrix([[0,0,1,1],[0,0,1,-1],[1,-1,0,0],[-1,-1,0,0]])
-
-psi = 0
-A = Matrix([[1,0],[0,2]])
 
 pprint(proba(U,psi0))
